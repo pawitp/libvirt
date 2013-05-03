@@ -54,7 +54,6 @@
 # include "xen_inotify.h"
 #endif
 #include "virxml.h"
-#include "virutil.h"
 #include "viralloc.h"
 #include "node_device_conf.h"
 #include "virpci.h"
@@ -66,6 +65,7 @@
 #include "virnodesuspend.h"
 #include "nodeinfo.h"
 #include "configmake.h"
+#include "virstring.h"
 
 #define VIR_FROM_THIS VIR_FROM_XEN
 #define XEN_SAVE_DIR LOCALSTATEDIR "/lib/libvirt/xen/save"
@@ -443,7 +443,7 @@ xenUnifiedConnectOpen(virConnectPtr conn, virConnectAuthPtr auth, unsigned int f
     }
 #endif
 
-    if (virAsprintf(&priv->saveDir, "%s", XEN_SAVE_DIR) == -1) {
+    if (!(priv->saveDir = strdup(XEN_SAVE_DIR))) {
         virReportOOMError();
         goto fail;
     }
@@ -2254,7 +2254,7 @@ xenUnifiedNodeDeviceReAttach(virNodeDevicePtr dev)
         goto out;
     }
 
-    if (virPCIDeviceReattach(pci, NULL, NULL, "pciback") < 0)
+    if (virPCIDeviceReattach(pci, NULL, NULL) < 0)
         goto out;
 
     ret = 0;

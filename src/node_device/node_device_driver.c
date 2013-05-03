@@ -33,10 +33,10 @@
 #include "datatypes.h"
 #include "viralloc.h"
 #include "virlog.h"
+#include "virstring.h"
 #include "node_device_conf.h"
 #include "node_device_hal.h"
 #include "node_device_driver.h"
-#include "virutil.h"
 
 #define VIR_FROM_THIS VIR_FROM_NODEDEV
 

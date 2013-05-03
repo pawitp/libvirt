@@ -51,7 +51,6 @@
 #include "driver.h"
 #include "virbuffer.h"
 #include "virpidfile.h"
-#include "virutil.h"
 #include "vircommand.h"
 #include "viralloc.h"
 #include "viruuid.h"
@@ -66,6 +65,7 @@
 #include "virnetdevvportprofile.h"
 #include "virdbus.h"
 #include "virfile.h"
+#include "virstring.h"
 
 #define NETWORK_PID_DIR LOCALSTATEDIR "/run/libvirt/network"
 #define NETWORK_STATE_DIR LOCALSTATEDIR "/lib/libvirt/network"
@@ -393,12 +393,9 @@ networkStateInitialize(bool privileged,
         }
         VIR_FREE(userdir);
 
-        userdir = virGetUserConfigDirectory();
-        if (virAsprintf(&base, "%s", userdir) == -1) {
-            VIR_FREE(userdir);
-            goto out_of_memory;
-        }
-        VIR_FREE(userdir);
+        base = virGetUserConfigDirectory();
+        if (!base)
+            goto error;
     }
 
     /* Configuration paths are either ~/.libvirt/qemu/... (session) or
